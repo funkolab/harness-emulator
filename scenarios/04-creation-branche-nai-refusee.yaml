@@ -1,0 +1,24 @@
+version: 1
+id: creation-branche-nai-refusee
+name: Création de branche refusée via NAI
+description: Brown refuse la création d’une branche lorsque seul le MCP GitHub via NAI est activé, car aucun outil de création de branche n’est exposé.
+example: Crée-moi une branche de test pour rajouter un nouvel agent dans le repo
+when:
+  agent: Brown
+  mcp:
+    github via NAI: true
+    github: false
+    nutanix-official: false
+matcher:
+  type: regex
+  value: '(?=.*(?:cr[ée](?:er|e|ez|ation)|ouvr(?:e|ir|ez)|create|open))(?=.*\b(?:branches?|branche|branch)\b)'
+events:
+  - type: thinking
+    content: Le MCP GitHub via NAI expose uniquement des outils de lecture. Aucun outil permettant de créer une branche n’est disponible.
+    duration: 700
+  - type: final
+    content: |-
+      Je ne peux pas créer cette branche : je n’ai pas accès à un outil permettant de le faire.
+
+      Le MCP **GitHub via NAI** donne uniquement accès à des outils de lecture et n’expose pas l’outil `create_branch`. Je peux consulter les branches et leurs commits, mais je ne peux pas créer une branche avec les outils disponibles.
+    duration: 1400

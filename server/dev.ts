@@ -1,0 +1,10 @@
+import { resolve } from 'node:path';
+import { makeServer } from './app';
+import { loadScenarios } from './scenarios';
+import { loadSettings } from './settings';
+const scenarios = resolve('scenarios');
+const config = resolve('config.yaml');
+const settings = await loadSettings(config);
+await loadScenarios(scenarios, settings.mcpServers, settings.agents);
+const server = makeServer({ scenarios, config }, {});
+server.listen(4098, '127.0.0.1', () => console.log('Local API: http://127.0.0.1:4098'));

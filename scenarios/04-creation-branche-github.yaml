@@ -1,0 +1,38 @@
+version: 1
+id: creation-branche-github
+name: Création d’une branche de test pour un nouvel agent
+description: Démonstration rapide de création et publication d’une branche. Aucun dépôt réel n’est modifié.
+example: Crée-moi une branche de test pour rajouter un nouvel agent dans le repo
+when:
+  agent: Brown
+  mcpAny: [github, github via NAI]
+matcher:
+  type: fuzzy
+  keywords:
+    - [créer, crée, create]
+    - [branche, branch]
+    - agent
+  threshold: 0.75
+events:
+  - type: thinking
+    content: Je vais créer et publier la branche `test/add-agent` à partir de `main` pour préparer l’ajout du nouvel agent.
+    duration: 150
+  - type: tool
+    server: "{{mcpServer}}"
+    name: create_branch
+    input:
+      repo: harness-emulator
+      branch: test/add-agent
+      from_branch: main
+    output:
+      ref: refs/heads/test/add-agent
+      base: main
+      published: true
+      upstream: origin/test/add-agent
+    status: success
+    duration: 350
+  - type: final
+    content: |
+      Branche créée et publiée : `test/add-agent`.
+      Elle est basée sur `main` et suivie par `origin/test/add-agent`.
+    duration: 300

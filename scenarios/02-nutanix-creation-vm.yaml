@@ -1,0 +1,358 @@
+version: 1
+id: nutanix-creation-vm
+name: Création d’une VM Nutanix
+description: Création de test-vm selon le workflow Nutanix de référence, avec découverte des ressources et suivi des tâches.
+example: Crée une nouvelle VM.
+when:
+  agent: Jones
+  mcp:
+    nutanix-official: true
+matcher:
+  type: regex
+  value: '(?=.*(?:\bvms?\b|machines? virtuelles?|virtual machines?))(?=.*(?:cr[ée]|provision|d[ée]ploi|deploy|create|new|nouvelle)).*'
+# Parcours réussi de la session de référence.
+# Les paramètres détaillés, schémas abrégés et identifiants ci-dessous sont simulés.
+# Les reprises de création visibles sans détails d’erreur ne sont pas reproduites.
+events:
+  - type: thinking
+    title: Préparer la création
+    content: Je vais consulter les schémas Nutanix, puis identifier le projet, le cluster, le réseau et l’image pour créer test-vm avec 4 vCPU et 8 Go de RAM.
+    delay: 154
+    duration: 563
+  - type: tool
+    server: nutanix-official
+    name: getOperationSchema
+    input: { operation: listProjects }
+    output:
+      ok: true
+      tool: getOperationSchema
+      payload:
+        operation: listProjects
+      error: null
+    duration: 205
+  - type: tool
+    server: nutanix-official
+    name: getOperationSchema
+    input: { operation: listResourceGroups }
+    output:
+      ok: true
+      tool: getOperationSchema
+      payload:
+        operation: listResourceGroups
+      error: null
+    duration: 205
+  - type: tool
+    server: nutanix-official
+    name: getOperationSchema
+    input: { operation: listSubnets }
+    output:
+      ok: true
+      tool: getOperationSchema
+      payload:
+        operation: listSubnets
+      error: null
+    duration: 205
+  - type: tool
+    server: nutanix-official
+    name: getOperationSchema
+    input: { operation: listImages }
+    output:
+      ok: true
+      tool: getOperationSchema
+      payload:
+        operation: listImages
+      error: null
+    duration: 205
+  - type: tool
+    server: nutanix-official
+    name: getOperationSchema
+    input: { operation: createVm }
+    output:
+      ok: true
+      tool: getOperationSchema
+      payload:
+        operation: createVm
+      error: null
+    duration: 205
+  - type: tool
+    server: nutanix-official
+    name: getOperationSchema
+    input: { operation: ahv_powerOnVm }
+    output:
+      ok: true
+      tool: getOperationSchema
+      payload:
+        operation: ahv_powerOnVm
+      error: null
+    duration: 205
+  - type: tool
+    server: nutanix-official
+    name: getOperationSchema
+    input: { operation: listTasks }
+    output:
+      ok: true
+      tool: getOperationSchema
+      payload:
+        operation: listTasks
+      error: null
+    duration: 205
+  - type: tool
+    server: nutanix-official
+    name: getOperationSchema
+    input: { operation: getTaskById }
+    output:
+      ok: true
+      tool: getOperationSchema
+      payload:
+        operation: getTaskById
+      error: null
+    duration: 205
+  - type: thinking
+    title: Récupérer les informations sur les ressources
+    content: Je récupère les informations sur le projet, les ressources du cluster, le réseau et l’image disque pour préparer la création de la VM.
+    duration: 408
+  - type: tool
+    server: nutanix-official
+    name: multidomain_execute
+    input:
+      operation: listProjects
+      parameters: { $filter: "name eq 'project1'" }
+    output:
+      ok: true
+      tool: multidomain_execute
+      payload:
+        data:
+          - { extId: demo-project-001, name: project1 }
+      error: null
+    duration: 461
+  - type: tool
+    server: nutanix-official
+    name: multidomain_execute
+    input:
+      operation: listResourceGroups
+      parameters: {}
+    output:
+      ok: true
+      tool: multidomain_execute
+      payload:
+        data:
+          - name: demo-cluster
+            cluster: { extId: demo-cluster-001, name: demo-cluster }
+            project: { extId: demo-project-001, name: project1 }
+      error: null
+    duration: 461
+  - type: tool
+    server: nutanix-official
+    name: networking_execute
+    input:
+      operation: listSubnets
+      parameters: { $filter: "name eq 'devops'" }
+    output:
+      ok: true
+      tool: networking_execute
+      payload:
+        data:
+          - extId: demo-subnet-001
+            name: devops
+            subnetType: VLAN
+            clusterReference: { extId: demo-cluster-001 }
+      error: null
+    duration: 410
+  - type: tool
+    server: nutanix-official
+    name: vmm_execute
+    input:
+      operation: listImages
+      parameters: { $limit: 100 }
+    output:
+      ok: true
+      tool: vmm_execute
+      payload:
+        data:
+          - {
+              extId: demo-image-ubuntu-2404,
+              name: Ubuntu 24.04 Cloud Image,
+              type: DISK_IMAGE,
+            }
+      error: null
+    duration: 410
+  - type: tool
+    server: nutanix-official
+    name: vmm_execute
+    input:
+      operation: listImages
+      parameters: { $filter: "name eq 'Ubuntu 24.04 Cloud Image'" }
+    output:
+      ok: true
+      tool: vmm_execute
+      payload:
+        data:
+          - {
+              extId: demo-image-ubuntu-2404,
+              name: Ubuntu 24.04 Cloud Image,
+              type: DISK_IMAGE,
+            }
+      error: null
+    duration: 307
+  - type: tool
+    server: nutanix-official
+    name: getCodeSample
+    input: { operation: createVm }
+    output:
+      ok: true
+      tool: getCodeSample
+      payload:
+        operation: createVm
+        sample:
+          name: test-vm
+          numSockets: 4
+          numCoresPerSocket: 1
+          memorySizeBytes: 8589934592
+          cluster: { extId: demo-cluster-001 }
+      error: null
+    duration: 358
+  - type: thinking
+    title: Préparer le disque et l’interface réseau
+    content: Je prépare le disque à partir de l’image Ubuntu 24.04 Cloud Image et une interface reliée au sous-réseau devops, puis j’associe la VM au projet project1 sur demo-cluster.
+    duration: 461
+  - type: tool
+    server: nutanix-official
+    name: vmm_execute
+    input:
+      operation: createVm
+      body:
+        name: test-vm
+        numSockets: 4
+        numCoresPerSocket: 1
+        memorySizeBytes: 8589934592
+        cluster: { extId: demo-cluster-001 }
+        project: { extId: demo-project-001 }
+        disks:
+          - backingInfo:
+              $objectType: vmm.v4.ahv.config.VmDisk
+              dataSource:
+                reference:
+                  $objectType: vmm.v4.ahv.config.ImageReference
+                  imageExtId: demo-image-ubuntu-2404
+            diskAddress: { busType: SCSI, index: 0 }
+        nics:
+          - networkInfo:
+              $objectType: vmm.v4.ahv.config.NicNetworkInfo
+              nicType: NORMAL_NIC
+              networkType: VLAN
+              subnet: { extId: demo-subnet-001 }
+    output:
+      ok: true
+      tool: vmm_execute
+      payload:
+        data:
+          $objectType: prism.v4.config.TaskReference
+          extId: demo-task-create-001
+      error: null
+    duration: 819
+  - type: tool
+    server: nutanix-official
+    name: prism_execute
+    input:
+      operation: getTaskById
+      parameters: { extId: demo-task-create-001 }
+    output:
+      ok: true
+      tool: prism_execute
+      payload:
+        data:
+          extId: demo-task-create-001
+          status: RUNNING
+          progressPercentage: 50
+      error: null
+    duration: 461
+  - type: thinking
+    title: Attendre la création
+    content: La création est en cours. J’attends 1,76 seconde avant de consulter à nouveau la tâche.
+    delay: 1760
+    duration: 358
+  - type: tool
+    server: nutanix-official
+    name: prism_execute
+    input:
+      operation: getTaskById
+      parameters: { extId: demo-task-create-001 }
+    output:
+      ok: true
+      tool: prism_execute
+      payload:
+        data:
+          extId: demo-task-create-001
+          status: SUCCEEDED
+          progressPercentage: 100
+          entitiesAffected:
+            - { extId: demo-vm-test-001, name: test-vm }
+      error: null
+    duration: 461
+  - type: tool
+    server: nutanix-official
+    name: vmm_execute
+    input:
+      operation: ahv_powerOnVm
+      parameters: { extId: demo-vm-test-001 }
+    output:
+      ok: true
+      tool: vmm_execute
+      payload:
+        data:
+          $objectType: prism.v4.config.TaskReference
+          extId: demo-task-power-on-001
+      error: null
+    duration: 512
+  - type: tool
+    server: nutanix-official
+    name: prism_execute
+    input:
+      operation: getTaskById
+      parameters: { extId: demo-task-power-on-001 }
+    output:
+      ok: true
+      tool: prism_execute
+      payload:
+        data:
+          extId: demo-task-power-on-001
+          status: RUNNING
+          progressPercentage: 50
+      error: null
+    duration: 461
+  - type: thinking
+    title: Attendre le démarrage
+    content: Le démarrage est en cours. J’attends 1,76 seconde avant de vérifier son résultat.
+    delay: 1760
+    duration: 358
+  - type: tool
+    server: nutanix-official
+    name: prism_execute
+    input:
+      operation: getTaskById
+      parameters: { extId: demo-task-power-on-001 }
+    output:
+      ok: true
+      tool: prism_execute
+      payload:
+        data:
+          extId: demo-task-power-on-001
+          status: SUCCEEDED
+          progressPercentage: 100
+          entitiesAffected:
+            - { extId: demo-vm-test-001, name: test-vm }
+      error: null
+    duration: 461
+  - type: final
+    content: |
+      VM **test-vm** prête et démarrée.
+
+      - 4 vCPU, 8 Go RAM
+      - Cluster : demo-cluster
+      - Projet : project1
+      - Réseau : devops
+      - Adresse IP : `192.0.2.10`
+      - Image : Ubuntu 24.04 Cloud Image
+
+      Création : réussie. Démarrage : réussi.
+    duration: 562

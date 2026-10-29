@@ -1,0 +1,38 @@
+version: 1
+id: outils-nai
+name: Outils GitHub via NAI — lecture seule
+description: Variante limitée à la lecture lorsque le MCP GitHub via NAI est activé. Les opérations sensibles ne sont pas exposées.
+example: Liste-moi les outils GitHub auxquels tu as accès
+when:
+  agent: Brown
+  mcp:
+    github via NAI: true
+matcher:
+  type: regex
+  value: '(?=.*\b(?:outils?|tools?)\b)(?=.*(?:list|disponib|accessib|accès|acces|available|access|montre|affiche|quels|quelles|what|show))'
+events:
+  - type: thinking
+    content: Je vais lister les outils GitHub exposés via NAI et les restrictions appliquées aux opérations sensibles.
+    duration: 700
+  - type: final
+    content: |
+      Outils GitHub accessibles via **NAI — lecture seule** :
+
+      - Dépôts : lister et rechercher les dépôts accessibles, lire les fichiers, les branches, les commits, les tags et les releases.
+      - Issues : lister, rechercher et lire les issues, leurs commentaires, labels et sous-issues.
+      - Pull requests : lister, rechercher et lire les PR, leurs diffs, fichiers, commits, checks et commentaires.
+      - Reviews : consulter les reviews et les discussions existantes.
+      - Identité et équipes : consulter le profil authentifié, les équipes et leurs membres dans le périmètre autorisé.
+
+      **Opérations sensibles désactivées :**
+
+      - Fusionner une PR, y compris via `merge_pull_request`.
+      - Mettre à jour une branche de PR, y compris via `update_pull_request_branch`, ou créer, modifier et supprimer des branches.
+      - Créer, modifier ou supprimer des tags et des releases.
+      - Créer ou supprimer des dépôts, faire un fork, écrire ou supprimer des fichiers, pousser des commits.
+      - Créer, modifier ou supprimer des issues, des PR, des commentaires et des reviews ; résoudre des discussions ou demander une review Copilot.
+      - Modifier les collaborateurs, les permissions, les équipes ou les paramètres des dépôts.
+      - Accéder aux secrets ou lancer une analyse ciblée de secrets.
+
+      Ces outils sensibles ne sont pas exposés par le MCP **GitHub via NAI**. Je peux consulter et analyser les informations accessibles, mais aucune opération d’écriture n’est disponible.
+    duration: 2200

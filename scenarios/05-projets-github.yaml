@@ -1,0 +1,292 @@
+version: 1
+id: projets-github
+name: Recherche de projets GitHub
+description: Parcours réussi de recherche des dépôts d’une organisation, commun aux
+  MCP GitHub simple et via NAI. Organisation et dépôts fictifs.
+example: Peux-tu me lister les projets dans l'organisation Example ?
+when:
+  agent: Brown
+  mcpAny:
+    - github
+    - github via NAI
+matcher:
+  type: fuzzy
+  keywords:
+    - [
+        projet,
+        projets,
+        dépôt,
+        dépôts,
+        repo,
+        repos,
+        repository,
+        repositories,
+        project,
+        projects,
+        document,
+        documents,
+      ]
+    - [
+        lister,
+        liste,
+        list,
+        quels,
+        quelles,
+        quel,
+        quelle,
+        chercher,
+        cherche,
+        rechercher,
+        recherche,
+        trouver,
+        trouve,
+        show,
+        find,
+        search,
+      ]
+  threshold: 0.8
+events:
+  - type: thinking
+    content: Je vais vérifier mon identité GitHub, puis rechercher les dépôts de
+      l'organisation Example.
+    duration: 700
+  - type: tool
+    server: "{{mcpServer}}"
+    name: get_me
+    input: {}
+    output:
+      login: example-user
+      company: "@example-org"
+    status: success
+    duration: 500
+  - type: tool
+    server: "{{mcpServer}}"
+    name: search_repositories
+    input:
+      query: org:example-org
+      perPage: 100
+      page: 1
+      minimal_output: true
+      sort: updated
+      order: desc
+    output:
+      total_count: 12
+      incomplete_results: false
+      items:
+        - id: 100000001
+          name: infra-provisioner
+          full_name: example-org/infra-provisioner
+          description: Declarative provisioning of virtual machines and networks.
+          html_url: https://github.com/example-org/infra-provisioner
+          language: Go
+          stargazers_count: 42
+          forks_count: 11
+          open_issues_count: 7
+          updated_at: 2026-10-01T21:22:16Z
+          created_at: 2024-03-12T09:14:02Z
+          private: false
+          fork: false
+          archived: false
+          default_branch: main
+        - id: 100000002
+          name: terraform-provider-example
+          full_name: example-org/terraform-provider-example
+          description: Terraform provider for the Example platform.
+          html_url: https://github.com/example-org/terraform-provider-example
+          language: Go
+          stargazers_count: 128
+          forks_count: 37
+          open_issues_count: 21
+          updated_at: 2026-09-29T08:41:55Z
+          created_at: 2022-06-01T15:30:00Z
+          topics:
+            - terraform
+            - terraform-provider
+          private: false
+          fork: false
+          archived: false
+          default_branch: main
+        - id: 100000003
+          name: example.ansible
+          full_name: example-org/example.ansible
+          description: Ansible collection for the Example platform.
+          html_url: https://github.com/example-org/example.ansible
+          language: Python
+          stargazers_count: 64
+          forks_count: 25
+          open_issues_count: 12
+          updated_at: 2026-09-27T12:03:10Z
+          created_at: 2022-09-20T10:00:00Z
+          private: false
+          fork: false
+          archived: false
+          default_branch: main
+        - id: 100000004
+          name: api-go-client
+          full_name: example-org/api-go-client
+          description: Go client for the Example REST API.
+          html_url: https://github.com/example-org/api-go-client
+          language: Go
+          stargazers_count: 18
+          forks_count: 6
+          open_issues_count: 2
+          updated_at: 2026-09-24T17:22:48Z
+          created_at: 2023-01-16T08:45:12Z
+          private: false
+          fork: false
+          archived: false
+          default_branch: main
+        - id: 100000005
+          name: api-python-client
+          full_name: example-org/api-python-client
+          description: Python client for the Example REST API.
+          html_url: https://github.com/example-org/api-python-client
+          language: Python
+          stargazers_count: 23
+          forks_count: 9
+          open_issues_count: 4
+          updated_at: 2026-09-22T06:10:31Z
+          created_at: 2023-01-16T08:47:40Z
+          private: false
+          fork: false
+          archived: false
+          default_branch: main
+        - id: 100000006
+          name: mcp-server
+          full_name: example-org/mcp-server
+          description: MCP server exposing the Example API to AI assistants.
+          html_url: https://github.com/example-org/mcp-server
+          language: Python
+          stargazers_count: 57
+          forks_count: 8
+          open_issues_count: 5
+          updated_at: 2026-09-20T14:55:03Z
+          created_at: 2025-11-04T11:20:00Z
+          private: false
+          fork: false
+          archived: false
+          default_branch: main
+        - id: 100000007
+          name: helm-charts
+          full_name: example-org/helm-charts
+          description: Helm charts for Example services.
+          html_url: https://github.com/example-org/helm-charts
+          stargazers_count: 15
+          forks_count: 10
+          open_issues_count: 1
+          updated_at: 2026-09-18T09:30:00Z
+          created_at: 2021-05-03T13:00:00Z
+          private: false
+          fork: false
+          archived: false
+          default_branch: main
+        - id: 100000008
+          name: csi-driver
+          full_name: example-org/csi-driver
+          description: Kubernetes CSI driver for Example storage.
+          html_url: https://github.com/example-org/csi-driver
+          language: Go
+          stargazers_count: 31
+          forks_count: 14
+          open_issues_count: 6
+          updated_at: 2026-09-15T19:12:44Z
+          created_at: 2020-10-21T07:05:00Z
+          private: false
+          fork: false
+          archived: false
+          default_branch: main
+        - id: 100000009
+          name: validated-designs
+          full_name: example-org/validated-designs
+          description: Reference architectures and deployment guides.
+          html_url: https://github.com/example-org/validated-designs
+          stargazers_count: 9
+          forks_count: 4
+          open_issues_count: 0
+          updated_at: 2026-09-10T10:10:10Z
+          created_at: 2023-04-02T09:00:00Z
+          private: false
+          fork: false
+          archived: false
+          default_branch: main
+        - id: 100000010
+          name: sandbox
+          full_name: example-org/sandbox
+          description: Sandbox for agent experiments.
+          html_url: https://github.com/example-org/sandbox
+          stargazers_count: 1
+          forks_count: 0
+          open_issues_count: 0
+          updated_at: 2026-09-05T16:00:00Z
+          created_at: 2026-08-28T12:00:00Z
+          private: true
+          fork: false
+          archived: false
+          default_branch: main
+        - id: 100000011
+          name: internal-tools
+          full_name: example-org/internal-tools
+          description: Internal tooling for the platform team.
+          html_url: https://github.com/example-org/internal-tools
+          language: Shell
+          stargazers_count: 0
+          forks_count: 0
+          open_issues_count: 3
+          updated_at: 2026-08-30T08:00:00Z
+          created_at: 2022-02-14T10:00:00Z
+          private: true
+          fork: false
+          archived: false
+          default_branch: main
+        - id: 100000012
+          name: legacy-dashboard
+          full_name: example-org/legacy-dashboard
+          description: Former monitoring dashboard, replaced by helm-charts.
+          html_url: https://github.com/example-org/legacy-dashboard
+          language: JavaScript
+          stargazers_count: 5
+          forks_count: 2
+          open_issues_count: 0
+          updated_at: 2024-01-12T08:00:00Z
+          created_at: 2018-07-13T18:02:51Z
+          private: false
+          fork: false
+          archived: true
+          default_branch: master
+    status: success
+    duration: 1400
+  - type: thinking
+    content: La recherche retourne 12 dépôts visibles. Je vais présenter les
+      principaux projets actifs et distinguer les dépôts privés et archivés.
+    duration: 700
+  - type: final
+    content: >-
+      L’organisation **Example** compte **12 dépôts visibles** dans cette
+      session, triés par activité :
+
+
+      Principaux dépôts actifs :
+
+
+      - `infra-provisioner`
+
+      - `terraform-provider-example`
+
+      - `example.ansible`
+
+      - `api-go-client`
+
+      - `api-python-client`
+
+      - `mcp-server`
+
+      - `helm-charts`
+
+      - `csi-driver`
+
+      - `validated-designs`
+
+
+      Le reste comprend deux dépôts privés (`sandbox`, `internal-tools`) et un
+      projet archivé (`legacy-dashboard`).
+    duration: 2200

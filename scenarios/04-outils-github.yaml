@@ -1,0 +1,27 @@
+version: 1
+id: outils-github
+name: Outils disponibles via GitHub simple
+description: Liste des catégories d’outils du workflow de référence, disponible uniquement lorsque le MCP github est activé.
+example: Liste-moi les outils GitHub auxquels tu as accès
+when:
+  agent: Brown
+  mcp:
+    github: true
+matcher:
+  type: regex
+  value: '(?=.*\b(?:outils?|tools?)\b)(?=.*(?:list|disponib|accessib|accès|acces|available|access|montre|affiche|quels|quelles|what|show))'
+events:
+  - type: thinking
+    content: Je vais lister les catégories d’outils GitHub accessibles.
+    duration: 700
+  - type: final
+    content: |
+      Outils GitHub accessibles :
+
+      - Dépôts : créer, fork, rechercher, fichiers, branches, commits, tags, releases, collaborateurs.
+      - Issues : lister, rechercher, lire, créer/modifier, commentaires, champs, types, labels, sous-issues.
+      - Pull requests : lister, rechercher, lire (diff, fichiers, commits, checks, commentaires), créer, modifier, fusionner, mettre à jour la branche.
+      - Reviews : créer/soumettre/supprimer une review, commenter une review en attente, répondre aux commentaires, résoudre les threads, demander une review Copilot.
+      - Sécurité : analyse ciblée de secrets.
+      - Identité et équipes : profil authentifié, équipes et membres.
+    duration: 1600

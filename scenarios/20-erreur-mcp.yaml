@@ -1,0 +1,29 @@
+version: 1
+id: erreur-mcp
+name: Erreur d’un serveur MCP
+description: Simule un échec réseau et une réponse de repli.
+example: Vérifie la connexion MCP
+matcher:
+  type: contains
+  value: connexion
+events:
+  - type: thinking
+    content: Je vérifie la disponibilité du serveur et de ses outils.
+    duration: 700
+  - type: tool
+    server: github
+    name: list_repositories
+    input: { owner: demo }
+    output:
+      {
+        code: -32001,
+        message: "Le serveur n’a pas répondu dans le délai imparti.",
+      }
+    status: error
+    duration: 1800
+  - type: final
+    content: |
+      Le serveur MCP **github** n’a pas répondu.
+
+      Vérifiez son adresse et ses identifiants, puis réessayez.
+    duration: 700

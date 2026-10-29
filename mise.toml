@@ -1,0 +1,68 @@
+[tools]
+bun = "1.4.2"
+
+[tasks.deps]
+description = "Install Bun dependencies from the lockfile"
+alias = "setup"
+run = "bun install --frozen-lockfile && touch node_modules/.mise-deps"
+sources = ["package.json", "bun.lock"]
+outputs = ["node_modules/.mise-deps"]
+
+[tasks.dev]
+description = "Start the API and Vite development servers"
+depends = ["deps"]
+run = "bun scripts/dev.mjs"
+
+[tasks.typecheck]
+description = "Check TypeScript types"
+depends = ["deps"]
+run = "bun run --bun tsc --noEmit"
+
+[tasks.build]
+description = "Check types and build the web interface"
+depends = ["deps"]
+run = "bun run build"
+
+[tasks.test]
+description = "Run the test suite, including HTTP and HTTPS"
+depends = ["deps"]
+run = "bun test"
+
+[tasks.scenarios]
+description = "Validate configuration and all scenario files"
+depends = ["deps"]
+run = "bun scripts/check.mjs"
+
+[tasks.lint]
+description = "Check formatting and lint rules with Biome"
+depends = ["deps"]
+run = "bun run lint"
+
+[tasks.format]
+description = "Format and apply safe lint fixes with Biome"
+depends = ["deps"]
+run = "bun run format"
+
+[tasks.check]
+description = "Run lint, type checking, tests and scenario validation"
+depends = ["lint", "typecheck", "test", "scenarios"]
+
+[tasks.package]
+description = "Build the native standalone binary and archive"
+depends = ["deps"]
+run = "bun scripts/package.mjs"
+
+[tasks."package:all"]
+description = "Build macOS Apple Silicon and Linux x64 distributions"
+depends = ["deps"]
+run = "bun scripts/package.mjs --all"
+
+[tasks."package:macos"]
+description = "Build the macOS Apple Silicon distribution"
+depends = ["deps"]
+run = "bun scripts/package.mjs --target bun-darwin-arm64"
+
+[tasks."package:linux"]
+description = "Build the Linux x64 distribution"
+depends = ["deps"]
+run = "bun scripts/package.mjs --target bun-linux-x64"

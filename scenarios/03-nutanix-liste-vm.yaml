@@ -1,0 +1,382 @@
+version: 1
+id: nutanix-liste-vm
+name: Inventaire des VM Nutanix
+description: Liste les 7 VM AHV du workflow de référence avec leur état et leurs ressources.
+example: Donne-moi la liste des VM.
+when:
+  agent: Jones
+  mcp:
+    nutanix-official: true
+matcher:
+  type: regex
+  # Les demandes d’extinction doivent rester éligibles au matcher fuzzy.
+  value: (?!.*(?:[ée]tein|[ée]teind|extinction|arr[êe]t|stop|shutdown|shut down|power off|turn off|lib[ée]r|free.*resources))(?=.*(?:\bvms?\b|machines? virtuelles?|virtual machines?))(?=.*(?:liste|lister|affich|montre|quelles|inventaire|list|show)).*
+events:
+  - type: thinking
+    title: Consulter l’inventaire
+    content: Je vais consulter le schéma de l’opération ahv_listVms, puis récupérer les machines virtuelles AHV avec leur état et les ressources attribuées.
+    delay: 360
+    duration: 1080
+  - type: tool
+    server: nutanix-official
+    name: getOperationSchema
+    input:
+      operation: ahv_listVms
+    output:
+      ok: true
+      tool: getOperationSchema
+      payload:
+        operation: ahv_listVms
+        method: GET
+        path: /vmm/v4.3/ahv/config/vms
+        path_parameters: []
+        query_parameters:
+          - name: $page
+            required: false
+            description: |
+              A URL query parameter that specifies the page number of the result set. It must be a positive integer between 0 and the maximum number of pages that are available for that resource. Any number out of this range might lead to no results. If both $page and $apply query parameters are present, $page will be applied on entities within the groups.
+            type: integer
+            format: int32
+            minimum: 0
+          - name: $limit
+            required: false
+            description: |
+              A URL query parameter that specifies the total number of records returned in the result set.  Must be a positive integer between 1 and 100. Any number out of this range will lead to a validation error. If the limit is not provided, a default value of 50 records will be returned in the result set. If both $limit and $apply query parameters are present, $limit  will be applied on entities within the groups. Default value of limit with $apply will be 5.
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+          - name: $filter
+            required: false
+            description: |-
+              A URL query parameter that allows clients to filter a collection of resources. The expression specified with $filter is evaluated for each resource in the collection, and only items where the expression evaluates to true are included in the response. Expression specified with the $filter must conform to the [OData V4.01](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html) URL conventions.
+              For example, filter **$filter=name eq 'karbon-ntnx-1.0'** would filter the result on cluster name 'karbon-ntnx1.0', filter **$filter=startswith(name, 'C')** would filter on cluster name starting with 'C'. If both $filter and $apply query parameters are present, $filter will be applied on entities within the groups.
+            type: string
+            odata_fields:
+              - apcConfig/cpuModel/extId
+              - apcConfig/cpuModel/name
+              - apcConfig/isApcEnabled
+              - biosUuid
+              - categories/extId
+              - cluster/extId
+              - customAttributes
+              - extId
+              - gpus/assignedDeviceInfo/device/deviceExtId
+              - gpus/backingInfo/PhysicalGpu/physicalGpuProfileReference/extId
+              - gpus/backingInfo/VirtualGpu/virtualGpuProfileReference/extId
+              - gpus/mode
+              - gpus/vendor
+              - guestTools/guestInfo/dnsName/value
+              - guestTools/guestInfo/guestOsBuildNumber
+              - guestTools/guestInfo/installedVirtIoVersion
+              - guestTools/guestInfo/lastBootUpTime
+              - guestTools/isCommunicationActiveOverSerialPort
+              - guestTools/isReachable
+              - hardwareClockTimezone
+              - host/extId
+              - isAgentVm
+              - isCpuHotplugEnabled
+              - isCpuPassthroughEnabled
+              - isGpuConsoleEnabled
+              - isLiveMigrateCapable
+              - isMemoryOvercommitEnabled
+              - isScsiControllerEnabled
+              - isVcpuHardPinningEnabled
+              - isVgaConsoleEnabled
+              - machineType
+              - memorySizeBytes
+              - name
+              - nics/extId
+              - nics/networkInfo/subnet/extId
+              - nics/nicNetworkInfo/DpOffloadNicNetworkInfo/subnet/extId
+              - nics/nicNetworkInfo/VirtualEthernetNicNetworkInfo/subnet/extId
+              - numCoresPerSocket
+              - numNumaNodes
+              - numSockets
+              - numThreadsPerCore
+              - ownershipInfo/owner/extId
+              - powerState
+              - project/extId
+              - projectExtId
+              - sourceVmProfile/extId
+              - storageConfig/hydrationInfo/hydrationStatus
+              - storageConfig/storageLocationInfo/storageCluster/extId
+          - name: $orderby
+            required: false
+            description: A URL query parameter that allows clients to specify the sort criteria for the returned list of objects. Resources can be sorted in ascending order using asc or descending order using desc. If asc or desc are not specified, the resources will be sorted in ascending order by default. For example, '$orderby=templateName desc' would get all templates sorted by templateName in descending order. If both $orderby and $apply query parameters are present, $orderby will be applied on entities within the groups.
+            type: string
+            odata_fields:
+              - guestTools/guestInfo/dnsName/value
+              - guestTools/guestInfo/installedVirtIoVersion
+              - guestTools/guestInfo/lastBootUpTime
+              - guestTools/version
+              - memorySizeBytes
+              - name
+              - numCoresPerSocket
+              - numNumaNodes
+              - numSockets
+              - numThreadsPerCore
+          - name: $select
+            required: false
+            description: A URL query parameter that allows clients to request a specific set of properties for each entity or complex type. Expression specified with the $select must conform to the [OData V4.01](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html) URL conventions. If a $select expression consists of a single select item that is an asterisk (i.e., *), then all properties on the matching resource will be returned. If both $select and $apply query parameters are present, $select will be applied on entities within the groups.
+            type: string
+            odata_fields:
+              - apcConfig/cpuModel/extId
+              - apcConfig/cpuModel/name
+              - apcConfig/isApcEnabled
+              - availabilityZone
+              - biosUuid
+              - bootConfig
+              - categories
+              - cdRoms
+              - cluster/extId
+              - createTime
+              - customAttributes
+              - description
+              - disks
+              - enabledCpuFeatures
+              - extId
+              - generationUuid
+              - gpus
+              - guestCustomization
+              - guestTools/availableVersion
+              - guestTools/capabilities
+              - guestTools/guestInfo/dnsName/value
+              - guestTools/guestInfo/guestOsBuildNumber
+              - guestTools/guestInfo/guestOsFullName
+              - guestTools/guestInfo/installedVirtIoVersion
+              - guestTools/guestInfo/isVmMobilityDriversInstalled
+              - guestTools/guestInfo/lastBootUpTime
+              - guestTools/guestOsVersion
+              - guestTools/isCommunicationActiveOverSerialPort
+              - guestTools/isEnabled
+              - guestTools/isInstalled
+              - guestTools/isIsoInserted
+              - guestTools/isReachable
+              - guestTools/isVmMobilityDriversInstalled
+              - guestTools/isVssSnapshotCapable
+              - guestTools/version
+              - hardwareClockTimezone
+              - host/extId
+              - isAgentVm
+              - isBrandingEnabled
+              - isCpuHotplugEnabled
+              - isCpuPassthroughEnabled
+              - isCrossClusterMigrationInProgress
+              - isGpuConsoleEnabled
+              - isLiveMigrateCapable
+              - isMemoryOvercommitEnabled
+              - isScsiControllerEnabled
+              - isVcpuHardPinningEnabled
+              - isVgaConsoleEnabled
+              - links
+              - machineType
+              - memorySizeBytes
+              - name
+              - nextScheduledReboot
+              - nics
+              - numCoresPerSocket
+              - numNumaNodes
+              - numSockets
+              - numThreadsPerCore
+              - ownershipInfo/owner/extId
+              - pcieDevices
+              - powerState
+              - project/extId
+              - projectExtId
+              - protectionPolicyState
+              - protectionType
+              - serialPorts
+              - source
+              - sourceVmProfile/extId
+              - storageConfig/hydrationInfo/hydrationStatus
+              - storageConfig/isFlashModeEnabled
+              - storageConfig/qosConfig
+              - storageConfig/storageLocationInfo/storageCluster/extId
+              - tenantId
+              - updateTime
+              - vmGuestCustomizationStatus
+              - vtpmConfig
+        header_parameters: []
+        request_body_required: false
+        request_body_schema: null
+        immutable_fields: []
+        required_body_fields: []
+      error: null
+    duration: 1080
+  - type: tool
+    server: nutanix-official
+    name: vmm_execute
+    input:
+      operation: ahv_listVms
+      parameters:
+        $limit: 100
+        $orderby: name asc
+        $select: name,extId,powerState,memorySizeBytes,numSockets,numCoresPerSocket,cluster/extId,guestTools/guestInfo/guestOsFullName
+    output:
+      ok: true
+      tool: vmm_execute
+      payload:
+        data:
+          - $reserved:
+              $fv: v4.r3
+            $objectType: vmm.v4.ahv.config.Vm
+            extId: 00000000-0000-4000-8000-000000000001
+            name: k8s-demo-1
+            numSockets: 4
+            numCoresPerSocket: 1
+            memorySizeBytes: 17179869184
+            cluster:
+              $reserved:
+                $fv: v4.r3
+              $objectType: vmm.v4.ahv.config.ClusterReference
+              extId: 00000000-0000-4000-8000-00000000c001
+            powerState: ON
+          - $reserved:
+              $fv: v4.r3
+            $objectType: vmm.v4.ahv.config.Vm
+            extId: 00000000-0000-4000-8000-000000000002
+            name: k8s-demo-2
+            numSockets: 4
+            numCoresPerSocket: 1
+            memorySizeBytes: 17179869184
+            cluster:
+              $reserved:
+                $fv: v4.r3
+              $objectType: vmm.v4.ahv.config.ClusterReference
+              extId: 00000000-0000-4000-8000-00000000c001
+            powerState: ON
+          - $reserved:
+              $fv: v4.r3
+            $objectType: vmm.v4.ahv.config.Vm
+            extId: 00000000-0000-4000-8000-000000000003
+            name: k8s-demo-3
+            numSockets: 4
+            numCoresPerSocket: 1
+            memorySizeBytes: 17179869184
+            cluster:
+              $reserved:
+                $fv: v4.r3
+              $objectType: vmm.v4.ahv.config.ClusterReference
+              extId: 00000000-0000-4000-8000-00000000c001
+            powerState: ON
+          - $reserved:
+              $fv: v4.r3
+            $objectType: vmm.v4.ahv.config.Vm
+            extId: 00000000-0000-4000-8000-000000000004
+            name: k8s-demo-md0-1
+            numSockets: 8
+            numCoresPerSocket: 1
+            memorySizeBytes: 34359738368
+            cluster:
+              $reserved:
+                $fv: v4.r3
+              $objectType: vmm.v4.ahv.config.ClusterReference
+              extId: 00000000-0000-4000-8000-00000000c001
+            powerState: ON
+          - $reserved:
+              $fv: v4.r3
+            $objectType: vmm.v4.ahv.config.Vm
+            extId: 00000000-0000-4000-8000-000000000005
+            name: k8s-demo-md0-2
+            numSockets: 8
+            numCoresPerSocket: 1
+            memorySizeBytes: 34359738368
+            cluster:
+              $reserved:
+                $fv: v4.r3
+              $objectType: vmm.v4.ahv.config.ClusterReference
+              extId: 00000000-0000-4000-8000-00000000c001
+            powerState: ON
+          - $reserved:
+              $fv: v4.r3
+            $objectType: vmm.v4.ahv.config.Vm
+            extId: 00000000-0000-4000-8000-000000000006
+            name: k8s-demo-md0-3
+            numSockets: 8
+            numCoresPerSocket: 1
+            memorySizeBytes: 34359738368
+            cluster:
+              $reserved:
+                $fv: v4.r3
+              $objectType: vmm.v4.ahv.config.ClusterReference
+              extId: 00000000-0000-4000-8000-00000000c001
+            powerState: ON
+          - $reserved:
+              $fv: v4.r3
+            $objectType: vmm.v4.ahv.config.Vm
+            extId: 00000000-0000-4000-8000-000000000007
+            name: k8s-demo-md0-4
+            numSockets: 8
+            numCoresPerSocket: 1
+            memorySizeBytes: 34359738368
+            cluster:
+              $reserved:
+                $fv: v4.r3
+              $objectType: vmm.v4.ahv.config.ClusterReference
+              extId: 00000000-0000-4000-8000-00000000c001
+            powerState: ON
+        $reserved:
+          $fv: v4.r3
+        $objectType: vmm.v4.ahv.config.ListVmsApiResponse
+        metadata:
+          flags:
+            - $reserved:
+                $fv: v1.r0
+              $objectType: common.v1.config.Flag
+              name: hasError
+              value: false
+            - $reserved:
+                $fv: v1.r0
+              $objectType: common.v1.config.Flag
+              name: isPaginated
+              value: true
+            - $reserved:
+                $fv: v1.r0
+              $objectType: common.v1.config.Flag
+              name: isTruncated
+              value: false
+            - $reserved:
+                $fv: v1.r0
+              $objectType: common.v1.config.Flag
+              name: isExpandRestricted
+              value: false
+          $reserved:
+            $fv: v1.r0
+          $objectType: common.v1.response.ApiResponseMetadata
+          links:
+            - $reserved:
+                $fv: v1.r0
+              $objectType: common.v1.response.ApiLink
+              href: https://pc.example.com:9440/api/vmm/v4.3/ahv/config/vms?$page=0&$limit=100&$orderby=name asc&$select=name,extId,powerState,memorySizeBytes,numSockets,numCoresPerSocket,cluster/extId,guestTools/guestInfo/guestOsFullName
+              rel: first
+            - href: https://pc.example.com:9440/api/vmm/v4.3/ahv/config/vms?$page=0&$limit=100&$orderby=name asc&$select=name,extId,powerState,memorySizeBytes,numSockets,numCoresPerSocket,cluster/extId,guestTools/guestInfo/guestOsFullName
+              rel: self
+            - href: https://pc.example.com:9440/api/vmm/v4.3/ahv/config/vms?$page=0&$limit=100&$orderby=name asc&$select=name,extId,powerState,memorySizeBytes,numSockets,numCoresPerSocket,cluster/extId,guestTools/guestInfo/guestOsFullName
+              rel: last
+          totalAvailableResults: 7
+          extraInfo:
+            - $reserved:
+                $fv: v1.r0
+              $objectType: common.v1.config.KVPair
+              name: truncatedIndexes
+      error: null
+    duration: 1680
+  - type: final
+    content: |
+      Voici les **7 VM AHV**, toutes en marche :
+
+      | VM | État | vCPU | Mémoire |
+      | --- | --- | --- | --- |
+      | k8s-demo-1 | Allumée | 4 | 16 Gio |
+      | k8s-demo-2 | Allumée | 4 | 16 Gio |
+      | k8s-demo-3 | Allumée | 4 | 16 Gio |
+      | k8s-demo-md0-1 | Allumée | 8 | 32 Gio |
+      | k8s-demo-md0-2 | Allumée | 8 | 32 Gio |
+      | k8s-demo-md0-3 | Allumée | 8 | 32 Gio |
+      | k8s-demo-md0-4 | Allumée | 8 | 32 Gio |
+
+      **7 VM sont allumées**, pour un total de **44 vCPU et 176 Gio de mémoire attribués**.
+
+      En se basant sur leurs noms, il semblerait que ces VM correspondent à un cluster Kubernetes appelé **k8s-demo**.
+    duration: 1440

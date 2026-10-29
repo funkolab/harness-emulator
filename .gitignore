@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.DS_Store
+release/
+server/generated-assets.ts
+preview*.jpg
+.*.bun-build
+cert.pem
+key.pem

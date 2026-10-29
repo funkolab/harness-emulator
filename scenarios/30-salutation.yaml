@@ -1,0 +1,14 @@
+version: 1
+id: salutation
+name: Réponse simple
+description: Une réponse sans appel d’outil.
+example: Bonjour
+matcher:
+  type: fuzzy
+  keywords:
+    - [bonjour, bonsoir, salut, hello, coucou, hi, hey]
+  threshold: 0.7
+events:
+  - type: final
+    content: Bonjour ! Comment puis-je vous aider ?
+    duration: 900

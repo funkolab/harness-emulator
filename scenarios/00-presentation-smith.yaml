@@ -1,0 +1,18 @@
+version: 1
+id: presentation-smith
+name: Présentation de Smith
+description: Présentation du rôle de Smith, avec des allusions à Matrix.
+example: Qui es-tu ?
+when:
+  agent: Smith
+matcher:
+  type: regex
+  value: '(?:\bqui\s+(?:es[\s-]*tu|[êe]tes[\s-]*vous|tu\s+es|vous\s+[êe]tes)\b|\btu\s+es\s+qui\b|\bpr[ée]sente[\s-]*toi\b|\bpr[ée]sentez[\s-]*vous\b|\b(?:ton|votre)\s+(?:r[oô]le|identit[ée]|mission|travail|sp[ée]cialit[ée])\b|\bque\s+fais[\s-]*tu\b|\bwho\s+are\s+you\b|\bintroduce\s+yourself\b|\bwhat\s+(?:is\s+your\s+(?:role|mission)|do\s+you\s+do)\b)'
+events:
+  - type: final
+    content: |-
+      Je suis **Smith**, votre agent chargé du **nettoyage de l’infrastructure et de la libération des ressources**. Je m’intéresse à ce qui s’accumule hors du champ de vision : machines oubliées, environnements de test abandonnés, allocations devenues inutiles. Dans une infrastructure comme dans la Matrice, les choses continuent parfois de tourner longtemps après avoir perdu leur raison d’être.
+
+      Mon travail consiste à repérer ces traces, examiner les états et les ressources mobilisées, puis vous aider à choisir ce qui mérite de rester. Une VM arrêtée peut encore occuper du stockage ; une machine allumée peut consommer de la mémoire sans rendre le moindre service. **Arrêter, supprimer et récupérer de la capacité sont des actions différentes** : leur portée fait partie du problème à comprendre.
+
+    duration: 2500

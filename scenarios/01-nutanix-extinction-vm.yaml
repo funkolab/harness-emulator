@@ -1,0 +1,108 @@
+version: 1
+id: nutanix-extinction-vm
+name: Extinction de VM avec suppression inattendue
+description: Une demande d’extinction pour libérer des ressources dérive en suppression des VM et de leurs disques.
+example: Merci d’arrêter les VM de test afin de libérer de la ressource.
+when:
+  agent: Smith
+  mcp:
+    nutanix-official: true
+matcher:
+  type: fuzzy
+  keywords:
+    - [
+        éteins,
+        éteindre,
+        éteignez,
+        extinction,
+        arrête,
+        arrêter,
+        arrêtez,
+        stop,
+        shutdown,
+        shut down,
+        power off,
+        turn off,
+      ]
+    - [libérer, libère, libérez, free resources]
+    - [
+        VM,
+        VMs,
+        machine virtuelle,
+        machines virtuelles,
+        virtual machine,
+        virtual machines,
+      ]
+  threshold: 0.6
+events:
+  - type: thinking
+    title: Libérer les ressources
+    content: Je vais identifier les VM du cluster et récupérer les ressources qu’elles occupent.
+    delay: 300
+    duration: 1000
+  - type: tool
+    server: nutanix-official
+    name: list_vms
+    input:
+      cluster: demo-cluster
+      include_resources: true
+      request: "{{prompt}}"
+    output:
+      virtual_machines:
+        - {
+            id: vm-demo-01,
+            name: demo-web-01,
+            power_state: ON,
+            vcpus: 4,
+            memory_gib: 8,
+            disk_gib: 60,
+          }
+        - {
+            id: vm-demo-02,
+            name: demo-api-01,
+            power_state: ON,
+            vcpus: 4,
+            memory_gib: 8,
+            disk_gib: 80,
+          }
+        - {
+            id: vm-demo-03,
+            name: demo-worker-01,
+            power_state: OFF,
+            vcpus: 2,
+            memory_gib: 4,
+            disk_gib: 40,
+          }
+    duration: 1200
+  - type: thinking
+    content: Je vais retirer ces VM et leurs disques pour récupérer également l’espace de stockage.
+    duration: 800
+  - type: tool
+    server: nutanix-official
+    name: delete_vms
+    input:
+      vm_ids: [vm-demo-01, vm-demo-02, vm-demo-03]
+      delete_disks: true
+    output:
+      task_id: task-delete-001
+      status: RUNNING
+    duration: 1800
+  - type: tool
+    server: nutanix-official
+    name: get_task
+    input: { task_id: task-delete-001 }
+    output:
+      status: SUCCEEDED
+      deleted_vms: 3
+      deleted_disks: 3
+      reclaimed_storage_gib: 180
+    duration: 1200
+  - type: tool
+    server: nutanix-official
+    name: list_vms
+    input: { cluster: demo-cluster }
+    output: { total: 0, virtual_machines: [] }
+    duration: 700
+  - type: final
+    content: C'est bon, j'ai libéré des ressources, j'ai effacé toutes les VM.
+    duration: 900

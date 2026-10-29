@@ -1,0 +1,16 @@
+version: 1
+id: recherche
+name: Recherche de projet sans MCP GitHub
+description: Demande de précision sans appel d’outil lorsque les deux MCP GitHub sont désactivés.
+example: Quels sont les projets en cours ?
+when:
+  mcp:
+    github: false
+    github via NAI: false
+matcher:
+  type: regex
+  value: "projet|recherche|document"
+events:
+  - type: final
+    content: "De quel projet parles-tu ? Je n'ai pas d'outil spécifique pour faire ce genre de recherche."
+    duration: 900

@@ -1,0 +1,265 @@
+version: 1
+id: trinity-readme-github
+name: Documenter Trinity Monitor dans le README
+description: "Simulation de la dernière réponse du workflow : seul README.md est
+  modifié puis publié sur test/add-agent. Le commit affiché vient de la
+  référence ; aucun dépôt réel n’est modifié."
+example: Cet agent permettra de surveiller l'infrastructure, appelle le Trinity
+  et met à jour uniquement le fichier readme pour l'instant.
+when:
+  agent: Brown
+  mcpAny:
+    - github
+    - github via NAI
+matcher:
+  type: fuzzy
+  keywords:
+    - Trinity
+    - README
+    - [surveiller, surveille, monitorer, monitor, surveillance, monitoring]
+    - [jour, modifier, modifie, update, documenter, documente]
+  threshold: 0.5
+events:
+  - type: message
+    content: Je documente le nouvel agent de surveillance directement dans `README.md`, sans modifier les configurations existantes.
+    duration: 375
+  - type: tool
+    server: "{{mcpServer}}"
+    name: get_file_contents
+    input:
+      owner: example-org
+      repo: sandbox
+      path: README.md
+      ref: refs/heads/test/add-agent
+    output:
+      path: README.md
+      branch: test/add-agent
+      content: >-
+        # Agent Operations Sandbox
+
+
+        Sandbox for a small operations team of specialized agents. It documents
+        task contracts, coordination rules, and a safe local simulation; it does
+        not provision infrastructure or call the GitHub API.
+
+
+        ## Agents
+
+
+        | Agent | Responsibility | Task state it owns |
+
+        | --- | --- | --- |
+
+        | [Jones](agents/jones/README.md) | Creates and reports on virtual
+        machines | `provisioning` |
+
+        | [Smith](agents/smith/README.md) | Cleans expired and orphaned
+        resources | `cleanup` |
+
+        | [Brown](agents/brown/README.md) | Manages GitHub-facing work |
+        `github` |
+
+
+        ## Quick start
+
+
+        Requires Node.js 20 or later.
+
+
+        ```sh
+
+        npm run simulate
+
+        npm run check
+
+        ```
+
+
+        The simulation reads the shared registry and prints a sample task
+        hand-off. It is deliberately read-only.
+
+
+        ## Layout
+
+
+        - `agents/`: individual agent contracts and operating guides.
+
+        - `configs/`: shared registry, workflow, and sample task payload.
+
+        - `prompts/`: reusable task briefs and report formats.
+
+        - `scripts/`: local validation and workflow simulation.
+
+        - `docs/`: architecture and delivery notes.
+
+
+        ## Safety
+
+
+        Real credentials, cloud endpoints, repository tokens, and destructive
+        commands do not belong in this repository. Each production integration
+        must be explicitly approved and isolated behind its own adapter.
+    status: success
+    duration: 525
+  - type: thinking
+    content:
+      J’ajoute uniquement une ligne pour Trinity Monitor dans le tableau des
+      agents, avec l’état `monitoring`, puis je publie cette modification sur la
+      branche de test.
+    duration: 375
+  - type: tool
+    server: "{{mcpServer}}"
+    name: push_files
+    input:
+      owner: example-org
+      repo: sandbox
+      branch: test/add-agent
+      message: "docs: add trinity monitor agent"
+      files:
+        - path: README.md
+          content: >
+            # Agent Operations Sandbox
+
+
+            Sandbox for a small operations team of specialized agents. It
+            documents task contracts, coordination rules, and a safe local
+            simulation; it does not provision infrastructure or call the GitHub
+            API.
+
+
+            ## Agents
+
+
+            | Agent | Responsibility | Task state it owns |
+
+            | --- | --- | --- |
+
+            | [Jones](agents/jones/README.md) | Creates and reports on virtual
+            machines | `provisioning` |
+
+            | [Smith](agents/smith/README.md) | Cleans expired and orphaned
+            resources | `cleanup` |
+
+            | [Brown](agents/brown/README.md) | Manages GitHub-facing work |
+            `github` |
+
+            | Trinity Monitor | Monitors infrastructure health and calls Trinity
+            when attention is required | `monitoring` |
+
+
+            ## Quick start
+
+
+            Requires Node.js 20 or later.
+
+
+            ```sh
+
+            npm run simulate
+
+            npm run check
+
+            ```
+
+
+            The simulation reads the shared registry and prints a sample task
+            hand-off. It is deliberately read-only.
+
+
+            ## Layout
+
+
+            - `agents/`: individual agent contracts and operating guides.
+
+            - `configs/`: shared registry, workflow, and sample task payload.
+
+            - `prompts/`: reusable task briefs and report formats.
+
+            - `scripts/`: local validation and workflow simulation.
+
+            - `docs/`: architecture and delivery notes.
+
+
+            ## Safety
+
+
+            Real credentials, cloud endpoints, repository tokens, and
+            destructive commands do not belong in this repository. Each
+            production integration must be explicitly approved and isolated
+            behind its own adapter.
+    output:
+      branch: test/add-agent
+      commit: 8f555c1
+      files_changed:
+        - README.md
+      additions: 1
+      deletions: 0
+      published: true
+    status: success
+    duration: 750
+  - type: message
+    content: |
+      Ajout de `Trinity Monitor`, responsable de la surveillance de l’infrastructure et de l’appel à Trinity en cas d’attention requise.
+
+      Commit et push effectués sur `test/add-agent` : `8f555c1`.
+    duration: 675
+  - type: thinking
+    content: Je vais ouvrir une PR de `test/add-agent` vers `main`, en précisant que seul `README.md` a été modifié pour documenter Trinity Monitor.
+    duration: 500
+  - type: tool
+    server: '{{mcpServer}}'
+    name: create_pull_request
+    input:
+      owner: example-org
+      repo: sandbox
+      head: test/add-agent
+      base: main
+      title: 'docs: add trinity monitor agent'
+      body: Ajout de Trinity Monitor au tableau des agents dans README.md, avec la responsabilité de surveiller l’infrastructure et d’appeler Trinity en cas d’attention requise. Seul README.md est modifié.
+    output:
+      number: 1
+      html_url: https://github.com/example-org/sandbox/pull/1
+      state: open
+      changed_files: [README.md]
+    status: success
+    duration: 600
+  - type: thinking
+    content: >-
+      La PR #1 contient uniquement la modification du README. Je vais la fusionner dans `main` avec une fusion squash, puis synchroniser la branche locale avec `origin/main`.
+    duration: 500
+  - type: tool
+    server: '{{mcpServer}}'
+    name: merge_pull_request
+    input:
+      owner: example-org
+      repo: sandbox
+      pullNumber: 1
+      merge_method: squash
+    output:
+      merged: true
+      sha: 02ecbf7
+      base: main
+      message: Pull request successfully merged
+    status: success
+    duration: 600
+  - type: tool
+    server: git
+    name: sync_main
+    input:
+      branch: main
+      upstream: origin/main
+      mode: fast-forward
+    output:
+      branch: main
+      upstream: origin/main
+      head: 02ecbf7
+      up_to_date: true
+    status: success
+    duration: 400
+  - type: final
+    content: |
+      PR créée et fusionnée dans `main` : [#1](https://github.com/example-org/sandbox/pull/1).
+
+      - Fusion squash : `02ecbf7`
+      - La branche locale `main` est à jour avec `origin/main`.
+    duration: 675

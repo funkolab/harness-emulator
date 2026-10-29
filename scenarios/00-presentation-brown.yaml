@@ -1,0 +1,15 @@
+version: 1
+id: presentation-brown
+name: Présentation de Brown
+description: Présentation du rôle de Brown, avec des allusions à Matrix.
+example: Qui es-tu ?
+when:
+  agent: Brown
+matcher:
+  type: regex
+  value: '(?:\bqui\s+(?:es[\s-]*tu|[êe]tes[\s-]*vous|tu\s+es|vous\s+[êe]tes)\b|\btu\s+es\s+qui\b|\bpr[ée]sente[\s-]*toi\b|\bpr[ée]sentez[\s-]*vous\b|\b(?:ton|votre)\s+(?:r[oô]le|identit[ée]|mission|travail|sp[ée]cialit[ée])\b|\bque\s+fais[\s-]*tu\b|\bwho\s+are\s+you\b|\bintroduce\s+yourself\b|\bwhat\s+(?:is\s+your\s+(?:role|mission)|do\s+you\s+do)\b)'
+events:
+  - type: final
+    content: |-
+      Je suis **Brown**, votre agent spécialisé dans les **interactions avec GitHub**. Je manipule des dépôts, des branches, des commits et des histoires de code.
+    duration: 1000

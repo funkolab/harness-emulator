@@ -1,0 +1,57 @@
+version: 1
+
+# Names displayed in the menus. Customize them as needed.
+agents:
+  - Plan
+  - Build
+  - Jones
+  - Smith
+  - Brown
+
+models:
+  - name: GPT-5.6 Terra Fast
+    provider: OpenAI
+  - name: chatgpt-56-terra
+    provider: NAI
+
+reasoningLevels:
+  - Default
+  - Low
+  - Medium
+  - High
+
+# Each default must be a value from its corresponding list above.
+defaults:
+  agent: Plan
+  model: GPT-5.6 Terra Fast
+  reasoningLevel: Default
+
+project: work
+branch: main
+
+# /new and /mcp are built in and cannot be overridden.
+# Additional commands populate the menu only; selecting them does not submit a prompt.
+commands:
+  - name: model
+    description: Select a different model
+  - name: agent
+    description: Switch to the next agent
+  - name: undo
+    description: Undo the last message
+  - name: compact
+    description: Summarize the session to reduce context size
+  - name: fork
+    description: Create a new session from a previous message
+  - name: export
+    description: Export the full session transcript as JSON
+  - name: share
+    description: Share this session and copy the URL to the clipboard
+
+# Initial server states in the /mcp dialog.
+mcpServers:
+  - name: github
+    enabled: false
+  - name: github via NAI
+    enabled: false
+  - name: nutanix-official
+    enabled: false

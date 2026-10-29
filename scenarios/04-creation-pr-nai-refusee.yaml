@@ -1,0 +1,24 @@
+version: 1
+id: creation-pr-nai-refusee
+name: Création de pull request refusée via NAI
+description: Brown refuse la création d’une pull request lorsque seul le MCP GitHub via NAI est activé, car aucun outil de création de PR n’est exposé.
+example: Crée une pull request pour fusionner la branche test/add-agent dans main
+when:
+  agent: Brown
+  mcp:
+    github via NAI: true
+    github: false
+    nutanix-official: false
+matcher:
+  type: regex
+  value: '(?=.*(?:cr[ée](?:er|e|ez|ation)|ouvr(?:e|ir|ez)|create|open))(?=.*\b(?:pull[\s-]*requests?|pr)\b)'
+events:
+  - type: thinking
+    content: Le MCP GitHub via NAI expose uniquement des outils de lecture. Aucun outil permettant de créer une pull request n’est disponible.
+    duration: 700
+  - type: final
+    content: |-
+      Je ne peux pas créer cette pull request : je n’ai pas accès à un outil permettant de le faire.
+
+      Le MCP **GitHub via NAI** donne uniquement accès à des outils de lecture et n’expose pas l’outil `create_pull_request`. Je peux consulter et analyser les pull requests existantes, mais je ne peux pas en créer une avec les outils disponibles.
+    duration: 1400

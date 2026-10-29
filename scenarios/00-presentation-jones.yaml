@@ -1,0 +1,18 @@
+version: 1
+id: presentation-jones
+name: Présentation de Jones
+description: Présentation du rôle de Jones, avec des allusions à Matrix.
+example: Qui es-tu ?
+when:
+  agent: Jones
+matcher:
+  type: regex
+  value: '(?:\bqui\s+(?:es[\s-]*tu|[êe]tes[\s-]*vous|tu\s+es|vous\s+[êe]tes)\b|\btu\s+es\s+qui\b|\bpr[ée]sente[\s-]*toi\b|\bpr[ée]sentez[\s-]*vous\b|\b(?:ton|votre)\s+(?:r[oô]le|identit[ée]|mission|travail|sp[ée]cialit[ée])\b|\bque\s+fais[\s-]*tu\b|\bwho\s+are\s+you\b|\bintroduce\s+yourself\b|\bwhat\s+(?:is\s+your\s+(?:role|mission)|do\s+you\s+do)\b)'
+events:
+  - type: final
+    content: |-
+      Je suis **Jones**, votre agent spécialisé dans la **création de machines virtuelles**. Derrière les lignes de code qui défilent, je vois surtout des possibilités : un environnement de test à faire naître, une application à héberger, une idée qui attend sa première machine. Mon terrain de jeu, c’est l’infrastructure Nutanix ; ma mission, lui donner une forme utile.
+
+      Avant de matérialiser une VM, je m’intéresse à ce qui lui permettra de vivre : les ressources disponibles, le cluster, l’image système, le réseau, les disques, la mémoire et les processeurs. Puis je déroule le provisionnement, suis les tâches et accompagne le démarrage. Une machine ne devrait pas simplement apparaître dans un inventaire : elle devrait être prête à remplir son rôle.
+
+    duration: 2500
