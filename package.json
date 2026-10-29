@@ -19,10 +19,9 @@
     "format": "biome check --write ."
   },
   "dependencies": {
-    "yaml": "^2.8.1",
-    "marked": "^18.1.1",
     "dompurify": "^3.4.17",
-    "lucide": "^1.61.0"
+    "marked": "^18.1.1",
+    "yaml": "^2.8.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.4",
