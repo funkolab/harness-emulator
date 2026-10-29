@@ -14,16 +14,17 @@ The browser only shows the conversation. Scenario names, matching rules and othe
 
 ## Quick start
 
-Download the archive for your platform (macOS Apple Silicon or Linux x64) from the [latest release](https://github.com/funkolab/harness-emulator/releases/latest), and check it against `SHA256SUMS`. Then extract it and run the binary from a clone of this repository, which provides the example configuration and scenarios:
+On macOS Apple Silicon or Linux x64, clone this repository, which provides the example configuration and scenarios, then download and extract the binary from the [latest release](https://github.com/funkolab/harness-emulator/releases/latest):
 
 ```sh
 git clone https://github.com/funkolab/harness-emulator.git
 cd harness-emulator
-tar -xzf ~/Downloads/harness-emulator-darwin-arm64.tar.gz
-./darwin-arm64/harness-emulator --config ./config.yaml
+PLATFORM=$(uname -s | tr A-Z a-z)-$(uname -m | sed s/x86_64/x64/)
+curl -L https://github.com/funkolab/harness-emulator/releases/latest/download/harness-emulator-$PLATFORM.tar.gz | tar -xz
+./$PLATFORM/harness-emulator --config ./config.yaml
 ```
 
-On Linux x64, use `harness-emulator-linux-x64.tar.gz` and `./linux-x64/harness-emulator`. macOS binaries are not signed: if Gatekeeper blocks the first launch, run `xattr -d com.apple.quarantine ./darwin-arm64/harness-emulator`. You can also [build from source](#build-from-source); the binaries are then in `release/`.
+The release also provides `SHA256SUMS` if you want to check the archive. macOS binaries are not signed: if Gatekeeper blocks the first launch, run `xattr -d com.apple.quarantine ./darwin-arm64/harness-emulator`. You can also [build from source](#build-from-source); the binaries are then in `release/`.
 
 Open **http://127.0.0.1:4097** in a browser and try one of the `example` questions from the files in `scenarios/`. Press Ctrl+C to stop the server.
 
