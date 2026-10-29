@@ -14,13 +14,16 @@ The browser only shows the conversation. Scenario names, matching rules and othe
 
 ## Quick start
 
-Build from source (see [Build from source](#build-from-source)), then run the binary from the project directory:
+Download the archive for your platform (macOS Apple Silicon or Linux x64) from the [latest release](https://github.com/funkolab/harness-emulator/releases/latest), and check it against `SHA256SUMS`. Then extract it and run the binary from a clone of this repository, which provides the example configuration and scenarios:
 
 ```sh
-./release/darwin-arm64/harness-emulator --config ./config.yaml
-# On Linux x64:
-# ./release/linux-x64/harness-emulator --config ./config.yaml
+git clone https://github.com/funkolab/harness-emulator.git
+cd harness-emulator
+tar -xzf ~/Downloads/harness-emulator-darwin-arm64.tar.gz
+./darwin-arm64/harness-emulator --config ./config.yaml
 ```
+
+On Linux x64, use `harness-emulator-linux-x64.tar.gz` and `./linux-x64/harness-emulator`. macOS binaries are not signed: if Gatekeeper blocks the first launch, run `xattr -d com.apple.quarantine ./darwin-arm64/harness-emulator`. You can also [build from source](#build-from-source); the binaries are then in `release/`.
 
 Open **http://127.0.0.1:4097** in a browser and try one of the `example` questions from the files in `scenarios/`. Press Ctrl+C to stop the server.
 
@@ -325,6 +328,17 @@ The API server listens on 4098 and Vite on 5173 with an `/api` proxy. In develop
 | `mise run package:linux`     | Package Linux x64                                            |
 
 Use `mise tasks --local` to list project tasks. The same scripts are available directly through `bun run dev`, `bun run build`, `bun test` and `bun run package:all`. Vite and TypeScript are explicitly run with Bun. OpenSSL is needed for HTTPS integration tests; mise manages Bun, while OpenSSL is supplied by the operating system. The standalone application itself does not require mise or development dependencies.
+
+## Publish a release
+
+Set the new version in `package.json`, commit, then push a matching tag:
+
+```sh
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The `Release` workflow checks that the tag matches `package.json`, builds and tests both distributions, then publishes a GitHub release with the `.tar.gz` archives and their `SHA256SUMS`.
 
 ## Contributing
 

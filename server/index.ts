@@ -25,7 +25,7 @@ try {
       });
       server.listen(options.port, '127.0.0.1', () =>
         console.log(
-          `OpenCode\n\n  ${options.tls ? 'https' : 'http'}://127.0.0.1:${options.port}\n\n  Scenarios: ${options.scenarios}\n  Ctrl+C to stop.`,
+          `Harness Emulator\n\n  ${options.tls ? 'https' : 'http'}://127.0.0.1:${options.port}\n\n  Scenarios: ${options.scenarios}\n  Ctrl+C to stop.`,
         ),
       );
       const stop = () => {
