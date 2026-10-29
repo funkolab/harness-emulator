@@ -20,16 +20,16 @@
   },
   "dependencies": {
     "yaml": "^2.8.1",
-    "marked": "^16.3.0",
+    "marked": "^18.1.1",
     "dompurify": "^3.4.17",
-    "lucide": "^0.468.0"
+    "lucide": "^1.61.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.4",
-    "@types/bun": "1.4.2",
-    "@types/node": "^24.6.0",
-    "typescript": "^5.9.2",
-    "vite": "^7.3.7"
+    "@types/bun": "1.4.4",
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
   },
   "packageManager": "bun@1.4.2"
 }
