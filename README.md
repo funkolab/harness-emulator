@@ -14,23 +14,17 @@ The browser only shows the conversation. Scenario names, matching rules and othe
 
 ## Quick start
 
-The following commands work on both macOS Apple Silicon and Linux x64. They require the [GitHub CLI](https://cli.github.com/) (`gh`); no GitHub login is needed. They clone this repository, which provides the example configuration and scenarios, download the archive for your platform from the [latest release](https://github.com/funkolab/harness-emulator/releases/latest), check it against `SHA256SUMS`, extract it and run the binary:
+On macOS Apple Silicon or Linux x64, clone this repository, which provides the example configuration and scenarios, then download and extract the binary from the [latest release](https://github.com/funkolab/harness-emulator/releases/latest):
 
 ```sh
 git clone https://github.com/funkolab/harness-emulator.git
 cd harness-emulator
-case "$(uname -s)-$(uname -m)" in
-  Darwin-arm64) PLATFORM=darwin-arm64 ;;
-  Linux-x86_64) PLATFORM=linux-x64 ;;
-  *) echo "Unsupported platform: $(uname -s)-$(uname -m)" ;;
-esac
-gh release download --repo funkolab/harness-emulator --pattern "harness-emulator-$PLATFORM.tar.gz" --pattern SHA256SUMS
-if command -v sha256sum >/dev/null; then sha256sum -c --ignore-missing SHA256SUMS; else shasum -a 256 -c --ignore-missing SHA256SUMS; fi
-tar -xzf "harness-emulator-$PLATFORM.tar.gz"
-"./$PLATFORM/harness-emulator" --config ./config.yaml
+PLATFORM=$(uname -s | tr A-Z a-z)-$(uname -m | sed s/x86_64/x64/)
+curl -L https://github.com/funkolab/harness-emulator/releases/latest/download/harness-emulator-$PLATFORM.tar.gz | tar -xz
+./$PLATFORM/harness-emulator --config ./config.yaml
 ```
 
-macOS binaries are not signed: if Gatekeeper blocks the first launch, run `xattr -d com.apple.quarantine ./darwin-arm64/harness-emulator`. You can also [build from source](#build-from-source); the binaries are then in `release/`.
+The release also provides `SHA256SUMS` if you want to check the archive. macOS binaries are not signed: if Gatekeeper blocks the first launch, run `xattr -d com.apple.quarantine ./darwin-arm64/harness-emulator`. You can also [build from source](#build-from-source); the binaries are then in `release/`.
 
 Open **http://127.0.0.1:4097** in a browser and try one of the `example` questions from the files in `scenarios/`. Press Ctrl+C to stop the server.
 
