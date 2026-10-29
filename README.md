@@ -14,16 +14,19 @@ The browser only shows the conversation. Scenario names, matching rules and othe
 
 ## Quick start
 
-Download the archive for your platform (macOS Apple Silicon or Linux x64) from the [latest release](https://github.com/funkolab/harness-emulator/releases/latest), and check it against `SHA256SUMS`. Then extract it and run the binary from a clone of this repository, which provides the example configuration and scenarios:
+Clone this repository, which provides the example configuration and scenarios, then download the archive for your platform (macOS Apple Silicon or Linux x64) from the [latest release](https://github.com/funkolab/harness-emulator/releases/latest), check it against `SHA256SUMS`, extract it and run the binary:
 
 ```sh
 git clone https://github.com/funkolab/harness-emulator.git
 cd harness-emulator
-tar -xzf ~/Downloads/harness-emulator-darwin-arm64.tar.gz
+wget https://github.com/funkolab/harness-emulator/releases/latest/download/harness-emulator-darwin-arm64.tar.gz
+wget https://github.com/funkolab/harness-emulator/releases/latest/download/SHA256SUMS
+grep darwin-arm64 SHA256SUMS | shasum -a 256 -c
+tar -xzf harness-emulator-darwin-arm64.tar.gz
 ./darwin-arm64/harness-emulator --config ./config.yaml
 ```
 
-On Linux x64, use `harness-emulator-linux-x64.tar.gz` and `./linux-x64/harness-emulator`. macOS binaries are not signed: if Gatekeeper blocks the first launch, run `xattr -d com.apple.quarantine ./darwin-arm64/harness-emulator`. You can also [build from source](#build-from-source); the binaries are then in `release/`.
+On Linux x64, replace `darwin-arm64` with `linux-x64` in these commands (and use `sha256sum -c` if `shasum` is not installed). macOS binaries are not signed: if Gatekeeper blocks the first launch, run `xattr -d com.apple.quarantine ./darwin-arm64/harness-emulator`. You can also [build from source](#build-from-source); the binaries are then in `release/`.
 
 Open **http://127.0.0.1:4097** in a browser and try one of the `example` questions from the files in `scenarios/`. Press Ctrl+C to stop the server.
 
